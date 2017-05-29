@@ -15,6 +15,7 @@ management:
 
 keycloak:
   contextPath: /auth
+  usersConfigurationFile: /keycloak-users.json
 
 security:
   user:

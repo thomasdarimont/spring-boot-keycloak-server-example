@@ -14,6 +14,8 @@ public class KeycloakServerProperties {
 
     String adminPassword = "admin";
 
+    String usersConfigurationFile = "/keycloak-users-config.json";
+
     public String getContextPath() {
         return contextPath;
     }
@@ -36,5 +38,13 @@ public class KeycloakServerProperties {
 
     public void setAdminPassword(String adminPassword) {
         this.adminPassword = adminPassword;
+    }
+
+    public String getUsersConfigurationFile() {
+        return usersConfigurationFile;
+    }
+
+    public void setUsersConfigurationFile(String usersConfigurationFile) {
+        this.usersConfigurationFile = usersConfigurationFile;
     }
 }
