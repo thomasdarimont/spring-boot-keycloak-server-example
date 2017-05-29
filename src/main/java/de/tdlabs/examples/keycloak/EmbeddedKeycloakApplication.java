@@ -4,6 +4,8 @@ import org.jboss.resteasy.core.Dispatcher;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.services.managers.ApplianceBootstrap;
 import org.keycloak.services.resources.KeycloakApplication;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.core.Context;
@@ -15,10 +17,13 @@ import java.lang.reflect.Proxy;
  */
 public class EmbeddedKeycloakApplication extends KeycloakApplication {
 
-  static KeycloakServerProperties keycloakServerProperties;
+  private KeycloakServerProperties keycloakServerProperties;
 
   public EmbeddedKeycloakApplication(@Context ServletContext context, @Context Dispatcher dispatcher) {
     super(context, dispatcher);
+
+    WebApplicationContext webCtx = WebApplicationContextUtils.getWebApplicationContext(context);
+    this.keycloakServerProperties = webCtx.getBean(KeycloakServerProperties.class);
 
     tryCreateMasterRealmAdminUser();
   }
