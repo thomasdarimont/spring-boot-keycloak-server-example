@@ -8,19 +8,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "keycloak")
 public class KeycloakServerProperties {
 
-    String contextPath = "/auth";
-
     String adminUsername = "admin";
 
     String adminPassword = "admin";
-
-    public String getContextPath() {
-        return contextPath;
-    }
-
-    public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
-    }
 
     public String getAdminUsername() {
         return adminUsername;

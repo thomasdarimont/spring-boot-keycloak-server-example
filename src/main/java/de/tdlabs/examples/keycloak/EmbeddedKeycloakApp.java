@@ -24,9 +24,8 @@ public class EmbeddedKeycloakApp {
 
             Integer port = serverProperties.getPort();
             String rootContextPath = serverProperties.getContextPath();
-            String keycloakContextPath = keycloakServerProperties.getContextPath();
 
-            System.out.printf("Embedded Keycloak started: http://localhost:%s%s%s to use keycloak%n", port, rootContextPath, keycloakContextPath);
+            System.out.printf("Embedded Keycloak started: http://localhost:%s%s to use keycloak%n", port, rootContextPath);
         };
     }
 }
