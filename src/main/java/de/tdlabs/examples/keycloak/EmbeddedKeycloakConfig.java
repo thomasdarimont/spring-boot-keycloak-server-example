@@ -4,7 +4,6 @@ import org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher;
 import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
 import org.keycloak.services.filters.KeycloakSessionServletFilter;
 import org.keycloak.services.listeners.KeycloakSessionDestroyListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -22,9 +21,9 @@ class EmbeddedKeycloakConfig {
 
         ServletRegistrationBean servlet = new ServletRegistrationBean(new HttpServlet30Dispatcher());
         servlet.addInitParameter("javax.ws.rs.Application", EmbeddedKeycloakApplication.class.getName());
-        servlet.addInitParameter(ResteasyContextParameters.RESTEASY_SERVLET_MAPPING_PREFIX, keycloakServerProperties.getContextPath());
+        servlet.addInitParameter(ResteasyContextParameters.RESTEASY_SERVLET_MAPPING_PREFIX, "/");
         servlet.addInitParameter(ResteasyContextParameters.RESTEASY_USE_CONTAINER_FORM_PARAMS, "true");
-        servlet.addUrlMappings(keycloakServerProperties.getContextPath() + "/*");
+        servlet.addUrlMappings("/*");
         servlet.setLoadOnStartup(1);
         servlet.setAsyncSupported(true);
 
@@ -42,7 +41,7 @@ class EmbeddedKeycloakConfig {
         FilterRegistrationBean filter = new FilterRegistrationBean();
         filter.setName("Keycloak Session Management");
         filter.setFilter(new KeycloakSessionServletFilter());
-        filter.addUrlPatterns(keycloakServerProperties.getContextPath() + "/*");
+        filter.addUrlPatterns("/*");
 
         return filter;
     }

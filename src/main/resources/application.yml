@@ -1,5 +1,5 @@
 server:
-  context-path: /
+  context-path: /auth
   port: 8080
 
 resteasy:
@@ -12,9 +12,6 @@ management:
   security:
     enabled: true
     roles: MANAGER
-
-keycloak:
-  contextPath: /auth
 
 security:
   user:
