@@ -18,8 +18,7 @@ public class EmbeddedKeycloakApplication extends KeycloakApplication {
   static KeycloakServerProperties keycloakServerProperties;
 
   public EmbeddedKeycloakApplication(@Context ServletContext context, @Context Dispatcher dispatcher) {
-
-    super(augmentToRedirectContextPath(context), dispatcher);
+    super(context, dispatcher);
 
     tryCreateMasterRealmAdminUser();
   }
@@ -45,21 +44,4 @@ public class EmbeddedKeycloakApplication extends KeycloakApplication {
     session.close();
   }
 
-
-  static ServletContext augmentToRedirectContextPath(ServletContext servletContext) {
-
-    ClassLoader classLoader = servletContext.getClassLoader();
-    Class[] interfaces = {ServletContext.class};
-
-    InvocationHandler invocationHandler = (proxy, method, args) -> {
-
-      if ("getInitParameter".equals(method.getName()) && args.length == 1 && "keycloak.embedded".equals(args[0])) {
-        return "true";
-      }
-
-      return method.invoke(servletContext, args);
-    };
-
-    return ServletContext.class.cast(Proxy.newProxyInstance(classLoader, interfaces, invocationHandler));
-  }
 }

@@ -20,6 +20,7 @@ class EmbeddedKeycloakConfig {
         EmbeddedKeycloakApplication.keycloakServerProperties = keycloakServerProperties;
 
         ServletRegistrationBean servlet = new ServletRegistrationBean(new HttpServlet30Dispatcher());
+        servlet.addInitParameter("keycloak.embedded", "true");
         servlet.addInitParameter("javax.ws.rs.Application", EmbeddedKeycloakApplication.class.getName());
         servlet.addInitParameter(ResteasyContextParameters.RESTEASY_SERVLET_MAPPING_PREFIX, "/");
         servlet.addInitParameter(ResteasyContextParameters.RESTEASY_USE_CONTAINER_FORM_PARAMS, "true");
