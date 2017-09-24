@@ -2,7 +2,7 @@ applications:
 - name: keycloak-server-test
   memory: 1024M
   # Add your name/initials to make the hostname unique
-  host: keycloak-server-test-${random-word}
+  host: keycloak-server-test
   domain: cfapps.io
   buildpack: https://github.com/cloudfoundry/java-buildpack.git
   path: target/spring-boot-keycloak-server-example-0.0.4.BUILD-SNAPSHOT.jar
