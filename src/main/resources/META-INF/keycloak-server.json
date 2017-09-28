@@ -67,11 +67,11 @@
     "connectionsJpa": {
         "provider": "default",
         "default": {
-            "url": "${env.KEYCLOAK_DATABASE_URL:jdbc:h2:./target/keycloak}",
-            "driver": "${keycloak.connectionsJpa.driver:org.h2.Driver}",
+            "url": "${env.KEYCLOAK_DATABASE_URL:jdbc:postgresql://127.0.0.1:5433/keycloak}",
+            "driver": "${keycloak.connectionsJpa.driver:org.postgresql.Driver}",
             "driverDialect": "${keycloak.connectionsJpa.driverDialect:}",
-            "user": "${keycloak.connectionsJpa.user:sa}",
-            "password": "${keycloak.connectionsJpa.password:}",
+            "user": "${keycloak.connectionsJpa.user:postgres}",
+            "password": "${keycloak.connectionsJpa.password:postgres}",
             "initializeEmpty": true,
             "migrationStrategy": "update",
             "showSql": "${keycloak.connectionsJpa.showSql:false}",
