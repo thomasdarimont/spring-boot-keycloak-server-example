@@ -56,9 +56,8 @@ class EmbeddedKeycloakConfig {
      * @param databaseUrl
      */
     private void setPostgresCredentials(String databaseUrl) {
-        String dbUrl = databaseUrl.toLowerCase(Locale.GERMAN);
         Pattern p = Pattern.compile("(postgres://)(.*?):(.*?)@(.*)");
-        Matcher m = p.matcher(dbUrl);
+        Matcher m = p.matcher(databaseUrl);
         StringBuilder sb = new StringBuilder("jdbc:postgresql://");
         if (m.find() && m.groupCount() == 4) {
             sb.append(m.group(4));
