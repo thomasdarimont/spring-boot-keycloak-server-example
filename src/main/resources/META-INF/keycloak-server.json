@@ -67,7 +67,7 @@
     "connectionsJpa": {
         "provider": "default",
         "default": {
-            "url": "${env.KEYCLOAK_DATABASE_URL:jdbc:postgresql://127.0.0.1:5433/keycloak}",
+            "url": "${keycloak.connectionsJpa.dbUrl:jdbc:postgresql://localhost:5433/keycloak}",
             "driver": "${keycloak.connectionsJpa.driver:org.postgresql.Driver}",
             "driverDialect": "${keycloak.connectionsJpa.driverDialect:}",
             "user": "${keycloak.connectionsJpa.user:postgres}",
