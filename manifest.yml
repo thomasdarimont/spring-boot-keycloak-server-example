@@ -1,8 +1,7 @@
 applications:
 - name: keycloak-server-test
-  memory: 1024M
-  # Add your name/initials to make the hostname unique
   host: keycloak-server-test
-  domain: cfapps.io
+  domain: eanadev.org
+  memory: 1024M
   buildpack: https://github.com/cloudfoundry/java-buildpack.git
   path: target/keycloak-server-0.1-SNAPSHOT.jar
