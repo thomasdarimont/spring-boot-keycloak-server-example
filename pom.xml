@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.tdlabs</groupId>
-    <artifactId>spring-boot-keycloak-server-example</artifactId>
-    <version>0.0.8.BUILD-SNAPSHOT</version>
+    <groupId>eu.europeana</groupId>
+    <artifactId>keycloak-server</artifactId>
+    <version>0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>spring-boot-keycloak-server</name>
-    <description>Demo project for Spring Boot</description>
+    <name>keycloak-server</name>
+    <description>Spring-Boot wrapper for Keycloak server</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -135,6 +135,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.0.0</version>
         </dependency>
 
         <dependency>
