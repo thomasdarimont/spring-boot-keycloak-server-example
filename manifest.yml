@@ -4,4 +4,4 @@ applications:
   domain: eanadev.org
   memory: 1024M
   buildpack: https://github.com/cloudfoundry/java-buildpack.git
-  path: target/keycloak-server-0.1-SNAPSHOT.jar
+  path: target/keycloak-server-0.2-SNAPSHOT.jar
