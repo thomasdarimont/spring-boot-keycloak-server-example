@@ -1,7 +1,7 @@
 Example for embedding Keycloak Server in a Spring-Boot App 
 ----------------------------------------------------------
 This is just a Proof of Concept and not recommended for production use.
-Nevertheless it is a great way develop and test Keycloak extensions or 
+Nevertheless it is a great way to develop and test Keycloak extensions or 
 generally playing with Keycloak. 
 
 
