@@ -41,18 +41,18 @@ public class EuropeanaEventListenerProvider implements EventListenerProvider {
 
     @Override
     public void onEvent(Event event) {
-        if (includedEvents.contains(event.getType()) && !clientId.equals(event.getClientId())) {
+        if (includedEvents.contains(event.getType()) && !clientId.equals(event.getClientId()) && apikeySynchronizer.isSynchronizationEnabled()) {
             try {
                 apikeySynchronizer.updateAccessDate(event.getClientId());
             } catch (IOException | ApikeyNotFoundException e) {
-                LOG.error("Api key corresponding to client id {} could not be updated.", event.getClientId());
+                LOG.error("Api key corresponding to client id {} could not be updated.", event.getClientId(), e);
             }
         }
     }
 
     @Override
     public void onEvent(AdminEvent adminEvent, boolean includeRepresentation) {
-        if (ResourceType.CLIENT.equals(adminEvent.getResourceType())) {
+        if (ResourceType.CLIENT.equals(adminEvent.getResourceType()) && apikeySynchronizer.isSynchronizationEnabled()) {
             String clientId = null;
             boolean enabled;
             String clientIdentifier = adminEvent.getResourcePath().substring(adminEvent.getResourcePath().lastIndexOf('/') + 1);
@@ -80,7 +80,7 @@ public class EuropeanaEventListenerProvider implements EventListenerProvider {
                     apikeySynchronizer.synchronizeClient(clientId, clientIdentifier, enabled);
                 }
             } catch (IOException | ApikeyNotFoundException e) {
-                LOG.error("Synchronization of a client failed. Client id: {}, Keycloak client identifier: {}.", clientId, clientIdentifier);
+                LOG.error("Synchronization of a client failed. Client id: {}, Keycloak client identifier: {}.", clientId, clientIdentifier, e);
             }
         }
     }

@@ -34,6 +34,9 @@ class ApikeySynchronizer {
     // Http client to perform calls to Apikey service
     private CloseableHttpClient httpClient;
 
+    // When no SSL connection to API Key service it will be false
+    private boolean synchronizationEnabled = true;
+
     ApikeySynchronizer() {
         httpClient = HttpClients.createDefault();
     }
@@ -52,6 +55,10 @@ class ApikeySynchronizer {
         }
         if (this.authorizationHeader == null) {
             this.authorizationHeader = prepareAuthorizationHeader(clientId, clientSecret);
+        }
+        if (!apikeyServiceURL.startsWith("https")) {
+            LOG.warn("Connection to API Key service is not over SSL. Synchronisation will be disabled.");
+            synchronizationEnabled = false;
         }
     }
 
@@ -79,6 +86,11 @@ class ApikeySynchronizer {
      * @param enabled flag indicating current state of the client in Keycloak
      */
     void synchronizeClient(String synchronizedClientId, String synchronizedKeycloakId, boolean enabled) throws IOException, ApikeyNotFoundException {
+        if (!synchronizationEnabled) {
+            LOG.warn("Synchronization is disabled due to not secured connection API Key service");
+            return;
+        }
+
         boolean previousEnabled = isEnabled(synchronizedClientId);
 
         if (previousEnabled != enabled) {
@@ -103,7 +115,7 @@ class ApikeySynchronizer {
                     try {
                         response.close();
                     } catch (IOException e) {
-                        LOG.warn("Close response failed");
+                        LOG.error("Close response failed.", e);
                     }
                 }
             }
@@ -188,7 +200,7 @@ class ApikeySynchronizer {
                 try {
                     response.close();
                 } catch (IOException e) {
-                    LOG.warn("Close response failed");
+                    LOG.error("Close response failed", e);
                 }
             }
         }
@@ -201,6 +213,10 @@ class ApikeySynchronizer {
      * @param clientId client id to update
      */
     void updateAccessDate(String clientId) throws IOException, ApikeyNotFoundException {
+        if (!synchronizationEnabled) {
+            LOG.warn("Synchronization is disabled due to not secured connection API Key service");
+            return;
+        }
         isEnabled(clientId);
     }
 
@@ -212,7 +228,15 @@ class ApikeySynchronizer {
         try {
             httpClient.close();
         } catch (IOException e) {
-            LOG.warn("Closing HTTP Client in {} failed.", this.getClass().getName());
+            LOG.error("Closing HTTP Client in {} failed.", this.getClass().getName(), e);
         }
+    }
+
+    /**
+     * Check if synchronization is enabled
+     * @return synchronizationEnabled flag value
+     */
+    public boolean isSynchronizationEnabled() {
+        return synchronizationEnabled;
     }
 }

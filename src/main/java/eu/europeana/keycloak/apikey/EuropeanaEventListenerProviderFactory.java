@@ -56,6 +56,10 @@ public class EuropeanaEventListenerProviderFactory implements EventListenerProvi
             LOG.warn("No apikey service URL provided. Clients synchronisation will not be possible");
         }
 
+        if (!apikeyServiceURL.startsWith("https")) {
+            LOG.warn("Connection to API Key service is not over SSL. Synchronisation will be disabled.");
+        }
+
         clientId = scope.get("client-id");
         if (clientId == null || clientId.isEmpty()) {
             LOG.warn("No client id for synchronisation provided. Clients synchronisation will not be possible");
