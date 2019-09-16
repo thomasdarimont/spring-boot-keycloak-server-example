@@ -24,6 +24,12 @@
         "jboss-logging" : {
             "success-level": "debug",
             "error-level": "warn"
+        },
+        "EuropeanaEventListener" : {
+            "include-events": [ "CLIENT_LOGIN", "REFRESH_TOKEN" ],
+            "apikey-service-url": "${apikey.service.url:http://localhost:8081/apikey}",
+            "client-id": "${apikey.manager.client.id:synchro}",
+            "client-secret": "${apikey.manager.client.secret:fea0e9e6-3f33-4cfa-a4e5-a68087d80013}"
         }
     },
 
