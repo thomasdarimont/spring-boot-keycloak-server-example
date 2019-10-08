@@ -53,6 +53,12 @@
         "provider": "${keycloak.authorization.provider:jpa}"
     },
 
+    "password-hashing": {
+        "BCrypt": {
+            "log-rounds": "13"
+        }
+    },
+
     "userCache": {
         "default" : {
             "enabled": true
