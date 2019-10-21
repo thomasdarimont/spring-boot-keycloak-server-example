@@ -59,6 +59,8 @@ class ApikeySynchronizer {
         if (!apikeyServiceURL.startsWith("https")) {
             LOG.warn("Connection to API Key service is not over SSL. Synchronisation will be disabled.");
             synchronizationEnabled = false;
+        } else {
+            LOG.info("Synchronizer initialized");
         }
     }
 
@@ -90,6 +92,7 @@ class ApikeySynchronizer {
             LOG.warn("Synchronization is disabled due to not secured connection API Key service");
             return;
         }
+        LOG.debug("Starting synchronization...");
 
         boolean previousEnabled = isEnabled(synchronizedClientId);
 
@@ -97,8 +100,10 @@ class ApikeySynchronizer {
             HttpRequestBase requestBase;
             if (enabled) {
                 requestBase = prepareReenableRequest(synchronizedClientId, synchronizedKeycloakId);
+                LOG.debug("Sending re-enable request...");
             } else {
                 requestBase = prepareInvalidateRequest(synchronizedClientId);
+                LOG.debug("Sending invalidate request...");
             }
 
             CloseableHttpResponse response = null;
@@ -191,6 +196,7 @@ class ApikeySynchronizer {
         httpDelete.addHeader(authorizationHeader);
         CloseableHttpResponse response = null;
         try {
+            LOG.debug("Sending delete request...");
             response = httpClient.execute(httpDelete);
             if (response != null && response.getStatusLine().getStatusCode() != HttpStatus.SC_NO_CONTENT) {
                 LOG.warn("Delete api key {} failed.", clientIdentifier);
@@ -217,6 +223,7 @@ class ApikeySynchronizer {
             LOG.warn("Synchronization is disabled due to not secured connection API Key service");
             return;
         }
+        LOG.debug("Updating access date...");
         isEnabled(clientId);
     }
 

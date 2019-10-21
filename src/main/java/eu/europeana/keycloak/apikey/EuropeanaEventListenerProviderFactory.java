@@ -21,6 +21,7 @@ public class EuropeanaEventListenerProviderFactory implements EventListenerProvi
     private static final Set<EventType> SUPPORTED_EVENTS = new HashSet<EventType>();
 
     static {
+        // These are the events for which we will update the access date!
         Collections.addAll(SUPPORTED_EVENTS, EventType.CLIENT_LOGIN, EventType.REFRESH_TOKEN);
     }
 
