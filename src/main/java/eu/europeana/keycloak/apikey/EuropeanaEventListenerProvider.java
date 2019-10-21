@@ -45,7 +45,7 @@ public class EuropeanaEventListenerProvider implements EventListenerProvider {
             try {
                 apikeySynchronizer.updateAccessDate(event.getClientId());
             } catch (IOException | ApikeyNotFoundException e) {
-                LOG.error("Api key corresponding to client id {} could not be updated.", event.getClientId(), e);
+                LOG.error("API key corresponding to client id {} could not be updated.", event.getClientId(), e);
             }
         }
     }
