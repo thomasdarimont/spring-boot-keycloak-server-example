@@ -59,7 +59,7 @@ class ApikeySynchronizer {
         if (apikeyServiceURL == null) {
             LOG.warn("No API Key service configured. Synchronisation will be disabled.");
             synchronizationEnabled = false;
-        } else if (apikeyServiceURL.startsWith("https")) {
+        } else if (!apikeyServiceURL.startsWith("https")) {
             LOG.warn("Connection to API Key service is not over SSL. Synchronisation will be disabled.");
             synchronizationEnabled = false;
         } else {
