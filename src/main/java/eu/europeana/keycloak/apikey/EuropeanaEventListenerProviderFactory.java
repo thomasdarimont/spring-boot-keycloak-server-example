@@ -54,7 +54,7 @@ public class EuropeanaEventListenerProviderFactory implements EventListenerProvi
         }
 
         // first try environment variable
-        apikeyServiceURL = System.getenv("apikey_service_url");
+        apikeyServiceURL = System.getenv("APIKEY_SERVICE_URL");
         if (StringUtils.isEmpty(apikeyServiceURL)) {
             // fallback read it from keycloak-server.json
             apikeyServiceURL = scope.get("apikey-service-url");
@@ -68,7 +68,7 @@ public class EuropeanaEventListenerProviderFactory implements EventListenerProvi
             LOG.warn("Connection to API Key service is not over SSL. Synchronisation will be disabled.");
         }
 
-        clientId = System.getenv("apikey_manager_client_id");
+        clientId = System.getenv("APIKEY_MANAGER_CLIENT_ID");
         if (StringUtils.isEmpty(clientId)) {
             clientId = scope.get("client-id");
         }
@@ -76,7 +76,7 @@ public class EuropeanaEventListenerProviderFactory implements EventListenerProvi
             LOG.warn("No client id for synchronisation provided. Clients synchronisation will not be possible");
         }
 
-        clientSecret = System.getenv("apikey_manager_client_secret");
+        clientSecret = System.getenv("APIKEY_MANAGER_CLIENT_SECRET");
         if (StringUtils.isEmpty(clientSecret)) {
             clientSecret = scope.get("client-secret");
         }
