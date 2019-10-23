@@ -8,6 +8,7 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,7 +53,12 @@ public class EuropeanaEventListenerProviderFactory implements EventListenerProvi
             Arrays.stream(exclude).map(s -> EventType.valueOf(s.toUpperCase())).forEach(eventType -> includedEvents.remove(eventType));
         }
 
-        apikeyServiceURL = scope.get("apikey-service-url");
+        // first try environment variable
+        apikeyServiceURL = System.getenv("apikey_service_url");
+        if (StringUtils.isEmpty(apikeyServiceURL)) {
+            // fallback read it from keycloak-server.json
+            apikeyServiceURL = scope.get("apikey-service-url");
+        }
         LOG.info("Configured apikey-service-url is {}", apikeyServiceURL);
         if (apikeyServiceURL == null || apikeyServiceURL.isEmpty()) {
             LOG.warn("No apikey service URL provided. Clients synchronisation will not be possible");
@@ -62,12 +68,18 @@ public class EuropeanaEventListenerProviderFactory implements EventListenerProvi
             LOG.warn("Connection to API Key service is not over SSL. Synchronisation will be disabled.");
         }
 
-        clientId = scope.get("client-id");
+        clientId = System.getenv("apikey_manager_client_id");
+        if (StringUtils.isEmpty(clientId)) {
+            clientId = scope.get("client-id");
+        }
         if (clientId == null || clientId.isEmpty()) {
             LOG.warn("No client id for synchronisation provided. Clients synchronisation will not be possible");
         }
 
-        clientSecret = scope.get("client-secret");
+        clientSecret = System.getenv("apikey_manager_client_secret");
+        if (StringUtils.isEmpty(clientSecret)) {
+            clientSecret = scope.get("client-secret");
+        }
         if (clientSecret == null || clientSecret.isEmpty()) {
             LOG.warn("No client secret for synchronisation client provided. Clients synchronisation will not be possible");
         }

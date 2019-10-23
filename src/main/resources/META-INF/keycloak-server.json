@@ -27,9 +27,9 @@
         },
         "EuropeanaEventListener" : {
             "include-events": [ "CLIENT_LOGIN", "REFRESH_TOKEN" ],
-            "apikey-service-url": "${apikey_service_url}",
-            "client-id": "${apikey_manager_client_id}",
-            "client-secret": "${apikey_manager_client_secret}"
+            "apikey-service-url": "${apikey_service_url:}",
+            "client-id": "${apikey_manager_client_id:}",
+            "client-secret": "${apikey_manager_client_secret:}"
         }
     },
 
