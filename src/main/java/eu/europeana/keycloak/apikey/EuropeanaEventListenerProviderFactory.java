@@ -52,13 +52,13 @@ public class EuropeanaEventListenerProviderFactory implements EventListenerProvi
             Arrays.stream(exclude).map(s -> EventType.valueOf(s.toUpperCase())).forEach(eventType -> includedEvents.remove(eventType));
         }
 
-        LOG.info("Configured apikey-service-url is {}", apikeyServiceURL);
         apikeyServiceURL = scope.get("apikey-service-url");
+        LOG.info("Configured apikey-service-url is {}", apikeyServiceURL);
         if (apikeyServiceURL == null || apikeyServiceURL.isEmpty()) {
             LOG.warn("No apikey service URL provided. Clients synchronisation will not be possible");
         }
 
-        if (!apikeyServiceURL.startsWith("https")) {
+        if (apikeyServiceURL != null && !apikeyServiceURL.startsWith("https")) {
             LOG.warn("Connection to API Key service is not over SSL. Synchronisation will be disabled.");
         }
 
