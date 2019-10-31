@@ -27,14 +27,14 @@ import java.util.regex.Pattern;
 @Configuration
 class EmbeddedKeycloakConfig {
 
-  private static final Logger LOG = LoggerFactory.getLogger(EmbeddedKeycloakConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EmbeddedKeycloakConfig.class);
 
-  private static final String DB_URL = "keycloak.connectionsJpa.dbUrl";
-  private static final String DB_USERNAME = "keycloak.connectionsJpa.user";
-  private static final String DB_PASSWORD = "keycloak.connectionsJpa.password";
+    private static final String DB_URL = "keycloak.connectionsJpa.dbUrl";
+    private static final String DB_USERNAME = "keycloak.connectionsJpa.user";
+    private static final String DB_PASSWORD = "keycloak.connectionsJpa.password";
 
-  @Bean
-  ServletRegistrationBean keycloakJaxRsApplication(KeycloakServerProperties keycloakServerProperties, DataSource dataSource) throws Exception {
+    @Bean
+    ServletRegistrationBean keycloakJaxRsApplication(KeycloakServerProperties keycloakServerProperties, DataSource dataSource) throws Exception {
 
     mockJndiEnvironment(dataSource);
 
