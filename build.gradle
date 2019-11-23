@@ -1,0 +1,49 @@
+plugins {
+	id "org.springframework.boot" version "2.2.1.RELEASE"
+}
+
+apply plugin: "java"
+apply plugin: "io.spring.dependency-management"
+
+
+ext["keycloak.version"] = "8.0.0"
+ext["resteasy.version"] = "3.9.0.Final"
+ext["infinispan.version"] = "9.4.16.Final"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework:spring-jdbc"
+    implementation "com.fasterxml.jackson.core:jackson-core"
+    implementation "com.fasterxml.jackson.core:jackson-annotations"
+    implementation "com.fasterxml.jackson.core:jackson-databind"
+    implementation "org.jboss.resteasy:resteasy-servlet-initializer:${project.properties['resteasy.version']}"
+    implementation "org.jboss.resteasy:resteasy-jackson2-provider:${project.properties['resteasy.version']}"
+    implementation "org.jboss.resteasy:resteasy-jaxb-provider:${project.properties['resteasy.version']}"
+    implementation "org.infinispan:infinispan-core:${project.properties['infinispan.version']}"
+    implementation "org.keycloak:keycloak-model-infinispan:${project.properties['keycloak.version']}"
+    implementation "org.keycloak:keycloak-model-jpa:${project.properties['keycloak.version']}"
+    implementation "org.keycloak:keycloak-js-adapter:${project.properties['keycloak.version']}"
+    implementation "org.keycloak:keycloak-themes:${project.properties['keycloak.version']}"
+    implementation "org.keycloak:keycloak-saml-core:${project.properties['keycloak.version']}"
+    implementation "org.keycloak:keycloak-authz-policy-common:${project.properties['keycloak.version']}"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+    implementation "org.freemarker:freemarker"
+    implementation "org.springframework.boot:spring-boot-configuration-processor"
+    /*testI*/implementation "com.h2database:h2"
+    implementation("org.keycloak:keycloak-services:${project.properties['keycloak.version']}") {
+        exclude group: "org.jboss.spec.javax.servlet", module: "jboss-servlet-api_3.0_spec"
+    }
+
+    implementation "org.springframework.boot:spring-boot-devtools"
+
+	// The version coming from JBoss through transitive dependencies doesn't exist
+	// in maven central so we reference the closest existing one here explicitly.
+	implementation "org.glassfish.jaxb:txw2:2.4.0-b180830.0438"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+}

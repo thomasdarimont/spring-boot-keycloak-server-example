@@ -1,18 +1,12 @@
 package de.tdlabs.examples.keycloak;
 
-import de.tdlabs.examples.keycloak.KeycloakServerProperties.AdminUser;
-import org.jboss.resteasy.core.Dispatcher;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.services.managers.ApplianceBootstrap;
 import org.keycloak.services.resources.KeycloakApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletContext;
-import javax.ws.rs.core.Context;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
-import java.util.Arrays;
+import de.tdlabs.examples.keycloak.KeycloakServerProperties.AdminUser;
 
 /**
  * Created by tom on 12.06.16.
@@ -23,10 +17,8 @@ public class EmbeddedKeycloakApplication extends KeycloakApplication {
 
     static KeycloakServerProperties keycloakServerProperties;
 
-    public EmbeddedKeycloakApplication(@Context ServletContext context, @Context Dispatcher dispatcher) {
-
-        super(augmentToRedirectContextPath(context), dispatcher);
-
+    public EmbeddedKeycloakApplication() {
+    	super();
         tryCreateMasterRealmAdminUser();
     }
 
@@ -48,29 +40,5 @@ public class EmbeddedKeycloakApplication extends KeycloakApplication {
         }
 
         session.close();
-    }
-
-
-    private static ServletContext augmentToRedirectContextPath(ServletContext servletContext) {
-
-        ClassLoader classLoader = servletContext.getClassLoader();
-        Class[] interfaces = {ServletContext.class};
-
-        InvocationHandler invocationHandler = (proxy, method, args) -> {
-
-            if ("getContextPath".equals(method.getName())) {
-                return keycloakServerProperties.getContextPath();
-            }
-
-            if ("getInitParameter".equals(method.getName()) && args.length == 1 && "keycloak.embedded".equals(args[0])) {
-                return "true";
-            }
-
-            LOG.info("Invoke on ServletContext: method=[{}] args=[{}]", method.getName(), Arrays.toString(args));
-
-            return method.invoke(servletContext, args);
-        };
-
-        return ServletContext.class.cast(Proxy.newProxyInstance(classLoader, interfaces, invocationHandler));
     }
 }
