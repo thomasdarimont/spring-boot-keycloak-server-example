@@ -1,4 +1,4 @@
-Simple example for embedding Keycloak in a Spring Boot App 
+Example for embedding Keycloak Server in a Spring-Boot App 
 ----------------------------------------------------------
 This is just a Proof of Concept and not recommended for production use.
 Nevertheless it is a great way develop and test Keycloak extensions or 
@@ -12,7 +12,7 @@ mvn package
 
 and start the spring boot app via:
 ```
-java -jar target/spring-boot-keycloak-server-example-*.BUILD-SNAPSHOT.jar
+java -jar target/keycloak-server-*.jar
 ```
 
 The embedded Keycloak server is now reachable via http://localhost:8080/auth.

@@ -5,6 +5,8 @@ import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
 import org.keycloak.services.filters.KeycloakSessionServletFilter;
 import org.keycloak.services.listeners.KeycloakSessionDestroyListener;
 import org.keycloak.services.resources.KeycloakApplication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -12,41 +14,52 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
-import java.util.Locale;
+import javax.naming.CompositeName;
+import javax.naming.InitialContext;
+import javax.naming.Name;
+import javax.naming.NameParser;
+import javax.naming.NamingException;
+import javax.naming.spi.NamingManager;
+import javax.sql.DataSource;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Configuration
 class EmbeddedKeycloakConfig {
 
+    private static final Logger LOG = LoggerFactory.getLogger(EmbeddedKeycloakConfig.class);
+
     private static final String DB_URL = "keycloak.connectionsJpa.dbUrl";
     private static final String DB_USERNAME = "keycloak.connectionsJpa.user";
     private static final String DB_PASSWORD = "keycloak.connectionsJpa.password";
 
     @Bean
-    ServletRegistrationBean keycloakJaxRsApplication(KeycloakServerProperties keycloakServerProperties) {
+    ServletRegistrationBean keycloakJaxRsApplication(KeycloakServerProperties keycloakServerProperties, DataSource dataSource) throws Exception {
 
-        //FIXME: hack to propagate Spring Boot Properties to Keycloak Application
-        EmbeddedKeycloakApplication.keycloakServerProperties = keycloakServerProperties;
+    mockJndiEnvironment(dataSource);
 
-        // Cloud Foundry will set the DATABASE_URL variable when there is a database service, but not in the desired
-        // format for the postgres driver
-        String databaseUrl = System.getenv("DATABASE_URL");
-        if (!StringUtils.isEmpty(databaseUrl)) {
-            System.out.println("Reading database credentials from system environment...");
-            setPostgresCredentials(databaseUrl);
-        }
+    //FIXME: hack to propagate Spring Boot Properties to Keycloak Application
+    EmbeddedKeycloakApplication.keycloakServerProperties = keycloakServerProperties;
 
-        ServletRegistrationBean servlet = new ServletRegistrationBean(new HttpServlet30Dispatcher());
-        servlet.addInitParameter(KeycloakApplication.KEYCLOAK_EMBEDDED, "true");
-        servlet.addInitParameter("javax.ws.rs.Application", EmbeddedKeycloakApplication.class.getName());
-        servlet.addInitParameter(ResteasyContextParameters.RESTEASY_SERVLET_MAPPING_PREFIX, keycloakServerProperties.getContextPath());
-        servlet.addInitParameter(ResteasyContextParameters.RESTEASY_USE_CONTAINER_FORM_PARAMS, "true");
-        servlet.addUrlMappings(keycloakServerProperties.getContextPath() + "/*");
-        servlet.setLoadOnStartup(1);
-        servlet.setAsyncSupported(true);
-        return servlet;
+    // Cloud Foundry will set the DATABASE_URL variable when there is a database service, but not in the desired
+    // format for the postgres driver
+    String databaseUrl = System.getenv("DATABASE_URL");
+    if (!StringUtils.isEmpty(databaseUrl)) {
+      LOG.info("Reading database credentials from system environment...");
+      setPostgresCredentials(databaseUrl);
     }
+
+    ServletRegistrationBean servlet = new ServletRegistrationBean(new HttpServlet30Dispatcher());
+    servlet.addInitParameter(KeycloakApplication.KEYCLOAK_EMBEDDED, "true");
+    servlet.addInitParameter("javax.ws.rs.Application", EmbeddedKeycloakApplication.class.getName());
+    servlet.addInitParameter(ResteasyContextParameters.RESTEASY_SERVLET_MAPPING_PREFIX, keycloakServerProperties.getContextPath());
+    servlet.addInitParameter(ResteasyContextParameters.RESTEASY_USE_CONTAINER_FORM_PARAMS, "true");
+    servlet.addUrlMappings(keycloakServerProperties.getContextPath() + "/*");
+    servlet.setLoadOnStartup(1);
+    servlet.setAsyncSupported(true);
+
+    return servlet;
+  }
 
     /**
      * Cloud Foundry supplies a DATABASE_URL in the form of "postgres://username:password@hostname:port/databasename"
@@ -69,17 +82,50 @@ class EmbeddedKeycloakConfig {
         }
     }
 
-    @Bean
-    ServletListenerRegistrationBean<KeycloakSessionDestroyListener> keycloakSessionDestroyListener() {
-        return new ServletListenerRegistrationBean<>(new KeycloakSessionDestroyListener());
-    }
+  @Bean
+  ServletListenerRegistrationBean<KeycloakSessionDestroyListener> keycloakSessionDestroyListener() {
+    return new ServletListenerRegistrationBean<>(new KeycloakSessionDestroyListener());
+  }
 
-    @Bean
-    FilterRegistrationBean keycloakSessionManagement(KeycloakServerProperties keycloakServerProperties) {
-        FilterRegistrationBean filter = new FilterRegistrationBean();
-        filter.setName("Keycloak Session Management");
-        filter.setFilter(new KeycloakSessionServletFilter());
-        filter.addUrlPatterns(keycloakServerProperties.getContextPath() + "/*");
-        return filter;
-    }
+  @Bean
+  FilterRegistrationBean keycloakSessionManagement(KeycloakServerProperties keycloakServerProperties) {
+
+    FilterRegistrationBean filter = new FilterRegistrationBean();
+    filter.setName("Keycloak Session Management");
+    filter.setFilter(new KeycloakSessionServletFilter());
+    filter.addUrlPatterns(keycloakServerProperties.getContextPath() + "/*");
+
+    return filter;
+  }
+
+
+  private void mockJndiEnvironment(DataSource dataSource) throws NamingException {
+    NamingManager.setInitialContextFactoryBuilder((env) -> (environment) -> new InitialContext() {
+
+      @Override
+      public Object lookup(Name name) throws NamingException {
+        return lookup(name.toString());
+      }
+
+      @Override
+      public Object lookup(String name) throws NamingException {
+
+        if ("spring/datasource".equals(name)) {
+          return dataSource;
+        }
+
+        return null;
+      }
+
+      @Override
+      public NameParser getNameParser(String name) throws NamingException {
+        return CompositeName::new;
+      }
+
+      @Override
+      public void close() throws NamingException {
+        //NOOP
+      }
+    });
+  }
 }
