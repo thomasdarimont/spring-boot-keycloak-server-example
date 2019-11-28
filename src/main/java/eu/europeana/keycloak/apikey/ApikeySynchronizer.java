@@ -75,6 +75,8 @@ class ApikeySynchronizer {
      * @param clientSecret secret corresponding to the clien
      * @return Basic authorization header
      */
+    @SuppressWarnings("squid:S2647") // we have not other option beside basic authentication at the moment,
+    // additionally we make sure we communicate over https
     private Header prepareAuthorizationHeader(String clientId, String clientSecret) {
         return new BasicHeader("Authorization",
                 "Basic " + Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes()));
