@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <!-- We use a specific patternLayout with JSON formatting. It adds a stacktrace (if available) and removes
+                 newlines, tabs and double quotes, so everything can be parsed by our ELK stack -->
+            <PatternLayout>
+                <alwaysWriteExceptions>false</alwaysWriteExceptions>
+                <pattern>{&quot;@timestamp&quot;:&quot;%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}&quot;,&quot;level&quot;:&quot;%-5p&quot;,&quot;thread&quot;:&quot;%t&quot;,&quot;class&quot;:&quot;%C&quot;, &quot;code_line_number&quot;:&quot;%L&quot;,&quot;message&quot;:&quot;%replace{%m %throwable}{[\n\t"]}{ }&quot;}%n</pattern>
+            </PatternLayout>
+
+            <!-- Use this pattern for local debugging -->
+            <!-- <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %highlight{%level}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green, DEBUG=blue} %logger{36} - %msg%n" /> -->
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+        </Root>
+        <Logger name="eu.europeana.keycloak" level="INFO"/>
+    </Loggers>
+</Configuration>
