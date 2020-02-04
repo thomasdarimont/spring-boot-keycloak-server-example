@@ -24,12 +24,6 @@
         "jboss-logging" : {
             "success-level": "debug",
             "error-level": "warn"
-        },
-        "EuropeanaEventListener" : {
-            "include-events": [ "CLIENT_LOGIN", "REFRESH_TOKEN" ],
-            "apikey-service-url": "${APIKEY_SERVICE_URL:}",
-            "client-id": "${APIKEY_MANAGER_CLIENT_ID:}",
-            "client-secret": "${APIKEY_MANAGER_CLIENT_SECRET:}"
         }
     },
 

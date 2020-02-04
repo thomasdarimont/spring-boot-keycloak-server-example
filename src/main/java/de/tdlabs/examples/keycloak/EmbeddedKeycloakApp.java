@@ -17,31 +17,22 @@ import org.springframework.context.annotation.PropertySource;
 @EnableConfigurationProperties(KeycloakServerProperties.class)
 @PropertySource(value = "classpath:keycloak.properties")
 @PropertySource(value = "classpath:keycloak-user.properties", ignoreResourceNotFound = true)
-public class EmbeddedKeycloakApp extends StaticPropertyUtil {
+public class EmbeddedKeycloakApp {
 
-  private static final Logger LOG   = LogManager.getLogger(EmbeddedKeycloakApp.class);
+    private static final Logger LOG   = LogManager.getLogger(EmbeddedKeycloakApp.class);
 
-  protected static KeycloakServerProperties.AdminUser getAdminUser() {
-    return StaticPropertyUtil.getAdminUser();
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(EmbeddedKeycloakApp.class, args);
+    }
 
-  protected static String getContextPath(){
-    return StaticPropertyUtil.getContextPath();
-  }
+    @Bean
+    ApplicationListener<ApplicationReadyEvent> onApplicationReadyEventListener(ServerProperties serverProperties) {
+        return evt -> {
+            Integer port = serverProperties.getPort();
+            String rootContextPath = serverProperties.getContextPath();
+            String keycloakContextPath = StaticPropertyUtil.getContextPath();
 
-  public static void main(String[] args) {
-    SpringApplication.run(EmbeddedKeycloakApp.class, args);
-  }
-
-  @Bean
-  ApplicationListener<ApplicationReadyEvent> onApplicationReadyEventListener(ServerProperties serverProperties) {
-    return (evt) -> {
-
-      Integer port = serverProperties.getPort();
-      String rootContextPath = serverProperties.getContextPath();
-      String keycloakContextPath = getContextPath();
-
-      LOG.info("Embedded Keycloak started: http://localhost:{}{}{} to use keycloak", port, rootContextPath, keycloakContextPath);
-    };
-  }
+            LOG.info("Embedded Keycloak started: http://localhost:{}{}{} to use keycloak", port, rootContextPath, keycloakContextPath);
+        };
+    }
 }

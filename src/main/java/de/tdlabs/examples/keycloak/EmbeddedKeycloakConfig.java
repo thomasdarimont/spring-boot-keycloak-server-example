@@ -27,17 +27,13 @@ class EmbeddedKeycloakConfig {
 
     private static final String DB_URL      = "keycloak.connectionsJpa.dbUrl";
     private static final String DB_USERNAME = "keycloak.connectionsJpa.user";
+    @SuppressWarnings("squid:S2068")
     private static final String DB_PASSWORD = "keycloak.connectionsJpa.password";
 
     @Bean
     ServletRegistrationBean keycloakJaxRsApplication(KeycloakServerProperties keycloakServerProperties,
-                                                     DataSource dataSource) throws Exception {
-
+                                                     DataSource dataSource) throws NamingException {
         mockJndiEnvironment(dataSource);
-
-        //FIXME: hack to propagate Spring Boot Properties to Keycloak Application
-//    EmbeddedKeycloakApplication.setKCProperties(keycloakServerProperties);
-        //FIXEDYOU
 
         // Cloud Foundry will set the DATABASE_URL variable when there is a database service, but not in the desired
         // format for the postgres driver
@@ -99,16 +95,15 @@ class EmbeddedKeycloakConfig {
     }
 
     private void mockJndiEnvironment(DataSource dataSource) throws NamingException {
-        NamingManager.setInitialContextFactoryBuilder((env) -> (environment) -> new InitialContext() {
+        NamingManager.setInitialContextFactoryBuilder(env -> environment -> new InitialContext() {
 
             @Override
-            public Object lookup(Name name) throws NamingException {
+            public Object lookup(Name name) {
                 return lookup(name.toString());
             }
 
             @Override
-            public Object lookup(String name) throws NamingException {
-
+            public Object lookup(String name) {
                 if ("spring/datasource".equals(name)) {
                     return dataSource;
                 }
@@ -116,12 +111,12 @@ class EmbeddedKeycloakConfig {
             }
 
             @Override
-            public NameParser getNameParser(String name) throws NamingException {
+            public NameParser getNameParser(String name) {
                 return CompositeName::new;
             }
 
             @Override
-            public void close() throws NamingException {
+            public void close() {
                 //NOOP
             }
         });

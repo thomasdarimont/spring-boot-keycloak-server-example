@@ -8,11 +8,14 @@ import org.keycloak.credential.hash.PasswordHashProviderFactory;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
 
+/**
+ * Factory for creating BCrypt password hashing provider
+ */
 public class BCryptPasswordHashProviderFactory implements PasswordHashProviderFactory {
 
     private static final Logger LOG = LogManager.getLogger(BCryptPasswordHashProviderFactory.class);
 
-    public static final String ID = "BCrypt";
+    private static final String ID = "BCrypt";
 
     private static final int DEFAULT_LOG_ROUNDS = 13;
     private static final int MIN_LOG_ROUNDS = 4;
@@ -22,13 +25,13 @@ public class BCryptPasswordHashProviderFactory implements PasswordHashProviderFa
 
     @Override
     public PasswordHashProvider create(KeycloakSession keycloakSession) {
-        LOG.info("Creating BCryptPasswordHashProvider ...");
+        LOG.debug("Creating BCryptPasswordHashProvider ...");
         return new BCryptPasswordHashProvider(ID, logRounds);
     }
 
     @Override
     public void init(Config.Scope scope) {
-        LOG.info("Initialising BCryptPasswordHashProviderFactory ...");
+        LOG.debug("Initialising BCryptPasswordHashProviderFactory ...");
         Integer configLogRounds = scope.getInt("log-rounds");
         if (configLogRounds != null && configLogRounds >= MIN_LOG_ROUNDS && configLogRounds <= MAX_LOG_ROUNDS) {
             logRounds = configLogRounds;
@@ -37,12 +40,12 @@ public class BCryptPasswordHashProviderFactory implements PasswordHashProviderFa
 
     @Override
     public void postInit(KeycloakSessionFactory keycloakSessionFactory) {
-
+        // no need to do anything
     }
 
     @Override
     public void close() {
-
+        // no need to do anything
     }
 
     @Override
