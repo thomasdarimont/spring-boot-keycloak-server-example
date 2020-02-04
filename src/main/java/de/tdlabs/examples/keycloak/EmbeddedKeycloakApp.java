@@ -1,5 +1,8 @@
 package de.tdlabs.examples.keycloak;
 
+import eu.europeana.keycloak.StaticPropertyUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
@@ -8,25 +11,37 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication(exclude = LiquibaseAutoConfiguration.class)
 @EnableConfigurationProperties(KeycloakServerProperties.class)
-public class EmbeddedKeycloakApp {
+@PropertySource(value = "classpath:keycloak.properties")
+@PropertySource(value = "classpath:keycloak-user.properties", ignoreResourceNotFound = true)
+public class EmbeddedKeycloakApp extends StaticPropertyUtil {
+
+  private static final Logger LOG   = LogManager.getLogger(EmbeddedKeycloakApp.class);
+
+  protected static KeycloakServerProperties.AdminUser getAdminUser() {
+    return StaticPropertyUtil.getAdminUser();
+  }
+
+  protected static String getContextPath(){
+    return StaticPropertyUtil.getContextPath();
+  }
 
   public static void main(String[] args) {
     SpringApplication.run(EmbeddedKeycloakApp.class, args);
   }
 
   @Bean
-  ApplicationListener<ApplicationReadyEvent> onApplicationReadyEventListener(ServerProperties serverProperties, KeycloakServerProperties keycloakServerProperties) {
-
+  ApplicationListener<ApplicationReadyEvent> onApplicationReadyEventListener(ServerProperties serverProperties) {
     return (evt) -> {
 
       Integer port = serverProperties.getPort();
       String rootContextPath = serverProperties.getContextPath();
-      String keycloakContextPath = keycloakServerProperties.getContextPath();
+      String keycloakContextPath = getContextPath();
 
-      System.out.printf("Embedded Keycloak started: http://localhost:%s%s%s to use keycloak%n", port, rootContextPath, keycloakContextPath);
+      LOG.info("Embedded Keycloak started: http://localhost:{}{}{} to use keycloak", port, rootContextPath, keycloakContextPath);
     };
   }
 }

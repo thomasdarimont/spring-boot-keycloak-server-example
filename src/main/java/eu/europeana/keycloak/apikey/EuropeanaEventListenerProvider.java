@@ -8,8 +8,8 @@ import org.keycloak.events.admin.OperationType;
 import org.keycloak.events.admin.ResourceType;
 import org.keycloak.models.ClientModel;
 import org.keycloak.models.KeycloakSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -20,7 +20,7 @@ import java.util.Set;
 
 public class EuropeanaEventListenerProvider implements EventListenerProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EuropeanaEventListenerProvider.class);
+    private static final Logger LOG   = LogManager.getLogger(EuropeanaEventListenerProvider.class);
 
     private Set<EventType> includedEvents;
 
@@ -31,6 +31,7 @@ public class EuropeanaEventListenerProvider implements EventListenerProvider {
     private KeycloakSession keycloakSession;
 
     public EuropeanaEventListenerProvider(KeycloakSession keycloakSession, Set<EventType> includedEvents, String apikeyServiceURL, String clientId, String clientSecret) {
+        LOG.info("EuropeanaEventListenerProvider created");
         this.keycloakSession = keycloakSession;
         this.includedEvents = includedEvents;
         this.clientId = clientId;
@@ -41,6 +42,7 @@ public class EuropeanaEventListenerProvider implements EventListenerProvider {
 
     @Override
     public void onEvent(Event event) {
+        LOG.info("OnEvent 1");
         if (includedEvents.contains(event.getType()) && !clientId.equals(event.getClientId()) && apikeySynchronizer.isSynchronizationEnabled()) {
             try {
                 apikeySynchronizer.updateAccessDate(event.getClientId());
@@ -52,8 +54,9 @@ public class EuropeanaEventListenerProvider implements EventListenerProvider {
 
     @Override
     public void onEvent(AdminEvent adminEvent, boolean includeRepresentation) {
+        LOG.info("OnEvent 2");
         if (ResourceType.CLIENT.equals(adminEvent.getResourceType()) && apikeySynchronizer.isSynchronizationEnabled()) {
-            String clientId = null;
+            String tempClientId = null;
             boolean enabled;
             String clientIdentifier = adminEvent.getResourcePath().substring(adminEvent.getResourcePath().lastIndexOf('/') + 1);
 
@@ -64,23 +67,23 @@ public class EuropeanaEventListenerProvider implements EventListenerProvider {
                     if (includeRepresentation) {
                         try (JsonReader reader = Json.createReader(new StringReader(adminEvent.getRepresentation()))) {
                             JsonObject object = reader.readObject();
-                            clientId = object.getString("clientId");
+                            tempClientId = object.getString("clientId");
                             enabled = object.getBoolean("enabled");
                         }
                     } else {
                         ClientModel clientModel = keycloakSession.clientLocalStorage().getClientById(clientIdentifier, keycloakSession.realmLocalStorage().getRealm("Europeana"));
                         if (clientModel != null) {
-                            clientId = clientModel.getClientId();
+                            tempClientId = clientModel.getClientId();
                             enabled = clientModel.isEnabled();
                         } else {
                             LOG.warn("Client with id: {} not found", clientIdentifier);
                             return;
                         }
                     }
-                    apikeySynchronizer.synchronizeClient(clientId, clientIdentifier, enabled);
+                    apikeySynchronizer.synchronizeClient(tempClientId, clientIdentifier, enabled);
                 }
             } catch (IOException | ApikeyNotFoundException e) {
-                LOG.error("Synchronization of a client failed. Client id: {}, Keycloak client identifier: {}.", clientId, clientIdentifier, e);
+                LOG.error("Synchronization of a client failed. Client id: {}, Keycloak client identifier: {}.", tempClientId, clientIdentifier, e);
             }
         }
     }

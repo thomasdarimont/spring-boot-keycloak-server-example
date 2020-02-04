@@ -8,46 +8,84 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "keycloak.server")
 public class KeycloakServerProperties {
 
-    String contextPath = "/auth";
+  private String contextPath;
+  private String pepper;
+  private String apikeyServiceUrl;
+  private String apikeyManagerClientId;
+  private String apikeyManagerClientSecret;
 
-    AdminUser adminUser = new AdminUser();
+  private AdminUser adminUser = new AdminUser();
 
-    public String getContextPath() {
-        return contextPath;
+
+  public String getContextPath() {
+    return contextPath;
+  }
+
+  public void setContextPath(String contextPath) {
+    this.contextPath = contextPath;
+  }
+
+  public String getPepper(){
+    return pepper;
+  }
+
+  public void setPepper(String pepper) {
+    this.pepper = pepper;
+  }
+
+  public String getApikeyServiceUrl() {
+    return apikeyServiceUrl;
+  }
+
+  public void setApikeyServiceUrl(String apikeyServiceUrl) {
+    this.apikeyServiceUrl = apikeyServiceUrl;
+  }
+
+  public String getApikeyManagerClientId() {
+    return apikeyManagerClientId;
+  }
+
+  public void setApikeyManagerClientId(String apikeyManagerClientId) {
+    this.apikeyManagerClientId = apikeyManagerClientId;
+  }
+
+  public String getApikeyManagerClientSecret() {
+    return apikeyManagerClientSecret;
+  }
+
+  public void setApikeyManagerClientSecret(String apikeyManagerClientSecret) {
+    this.apikeyManagerClientSecret = apikeyManagerClientSecret;
+  }
+
+  public AdminUser getAdminUser() {
+    return this.adminUser;
+  }
+
+//  public void setAdminUser(AdminUser adminUser) {
+//    this.adminUser = adminUser;
+//  }
+
+  public static class AdminUser {
+
+    String username;
+
+    String password;
+
+    public String getUsername() {
+      return username;
     }
 
-    public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
+    public void setUsername(String username) {
+      this.username = username;
     }
 
-    public AdminUser getAdminUser() {
-        return adminUser;
+    public String getPassword() {
+      return this.password;
     }
 
-    public void setAdminUser(AdminUser adminUser) {
-        this.adminUser = adminUser;
+    public void setPassword(String password) {
+      this.password = password;
     }
 
-    public static class AdminUser {
-
-        private String username = "admin";
-
-        private String password = "admin"; // default, need to change after first run
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-    }
+  }
 }

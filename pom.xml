@@ -26,6 +26,10 @@
         <keycloak.version>4.8.3.Final</keycloak.version>
         <resteasy.version>3.6.1.Final</resteasy.version>
         <infinispan.version>9.3.1.Final</infinispan.version>
+        <postgresql.version>42.0.0</postgresql.version>
+        <spring-security-crypto.version>5.1.4.RELEASE</spring-security-crypto.version>
+        <hibernate.version>5.3.6.Final</hibernate.version>
+        <commons-codec.version>1.10</commons-codec.version>
     </properties>
 
     <dependencies>
@@ -148,6 +152,12 @@
             <version>${keycloak.version}</version>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>org.keycloak</groupId>-->
+<!--            <artifactId>keycloak-adapter-core</artifactId>-->
+<!--            <version>${keycloak.version}</version>-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-authz-policy-common</artifactId>
@@ -162,13 +172,13 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.0.0</version>
+            <version>${postgresql.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope>
+             <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -197,14 +207,23 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
-            <version>5.1.4.RELEASE</version>
+            <version>${spring-security-crypto.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.3.6.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec.version}</version>
+        </dependency>
+
+
+
     </dependencies>
 
     <build>
@@ -226,24 +245,6 @@
                         </dependency>
                     </requiresUnpack>
                 </configuration>
-            </plugin>
-
-            <!-- This will be active when running the verify or install goal
-                 To skip (e.g. during debugging) use 'mvn clean package')-->
-            <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <version>5.2.4</version>
-                <configuration>
-                    <bundleAuditAnalyzerEnabled>false</bundleAuditAnalyzerEnabled>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

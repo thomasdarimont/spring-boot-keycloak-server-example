@@ -9,8 +9,8 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.PreDestroy;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.util.Base64;
  */
 class ApikeySynchronizer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ApikeySynchronizer.class);
+    private static final Logger LOG   = LogManager.getLogger(ApikeySynchronizer.class);
 
     // URL to Apikey service
     private String apikeyServiceURL = null;
@@ -50,6 +50,7 @@ class ApikeySynchronizer {
      * @param clientSecret secret corresponding to the client id
      */
     void init(String apikeyServiceURL, String clientId, String clientSecret) {
+        LOG.info("Initialising Apikey synchroniser ...");
         if (this.apikeyServiceURL == null) {
             this.apikeyServiceURL = apikeyServiceURL;
         }
@@ -78,6 +79,7 @@ class ApikeySynchronizer {
     @SuppressWarnings("squid:S2647") // we have not other option beside basic authentication at the moment,
     // additionally we make sure we communicate over https
     private Header prepareAuthorizationHeader(String clientId, String clientSecret) {
+        LOG.info("Apikey synchroniser prepare authorization header");
         return new BasicHeader("Authorization",
                 "Basic " + Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes()));
     }
@@ -93,6 +95,7 @@ class ApikeySynchronizer {
      * @param enabled flag indicating current state of the client in Keycloak
      */
     void synchronizeClient(String synchronizedClientId, String synchronizedKeycloakId, boolean enabled) throws IOException, ApikeyNotFoundException {
+        LOG.info("Apikey synchroniser syncronize client");
         if (!synchronizationEnabled) {
             LOG.warn("Synchronization is disabled due to not secured connection API Key service");
             return;
@@ -138,6 +141,7 @@ class ApikeySynchronizer {
      * @return delete request object
      */
     private HttpDelete prepareInvalidateRequest(String synchronizedClientId) {
+        LOG.info("Apikey synchroniser preparing invalidate request");
         HttpDelete httpDelete = new HttpDelete(apikeyServiceURL + "/" + synchronizedClientId);
         httpDelete.addHeader(authorizationHeader);
         return httpDelete;
@@ -150,6 +154,7 @@ class ApikeySynchronizer {
      * @return post request object
      */
     private HttpPost prepareReenableRequest(String synchronizedClientId, String synchronizedKeycloakId) {
+        LOG.info("Apikey synchroniser preparing re-enable request");
         HttpPost httpPost = new HttpPost(apikeyServiceURL + "/" + synchronizedClientId + "?keycloakId=" + synchronizedKeycloakId);
         httpPost.addHeader(authorizationHeader);
         httpPost.addHeader("Content-Type", "application/json");
@@ -165,6 +170,7 @@ class ApikeySynchronizer {
      * @throws ApikeyNotFoundException when client id is not recognized as api key
      */
     private boolean isEnabled(String synchronizedClientId) throws IOException, ApikeyNotFoundException {
+        LOG.info("Apikey synchroniser checking client in Apikey service");
         HttpPost httpPost = prepareValidateRequest(synchronizedClientId);
         try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
             if (response != null) {
@@ -185,6 +191,7 @@ class ApikeySynchronizer {
      * @return post request object
      */
     private HttpPost prepareValidateRequest(String synchronizedClientId) {
+        LOG.info("Apikey synchroniser validate request");
         HttpPost httpPost = new HttpPost(apikeyServiceURL + "/validate");
         httpPost.addHeader("Authorization", "APIKEY " + synchronizedClientId);
         return httpPost;
@@ -197,6 +204,7 @@ class ApikeySynchronizer {
      * @throws IOException when problem with request execution occurs
      */
     void deleteClient(String clientIdentifier) throws IOException {
+        LOG.info("Apikey synchroniser preparing delete client");
         HttpDelete httpDelete = new HttpDelete(apikeyServiceURL + "/synchronize/" + clientIdentifier);
         httpDelete.addHeader(authorizationHeader);
         CloseableHttpResponse response = null;

@@ -1,12 +1,13 @@
 package de.tdlabs.examples.keycloak;
 
 import de.tdlabs.examples.keycloak.KeycloakServerProperties.AdminUser;
+import eu.europeana.keycloak.StaticPropertyUtil;
 import org.jboss.resteasy.core.Dispatcher;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.services.managers.ApplianceBootstrap;
 import org.keycloak.services.resources.KeycloakApplication;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.core.Context;
@@ -19,14 +20,10 @@ import java.util.Arrays;
  */
 public class EmbeddedKeycloakApplication extends KeycloakApplication {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EmbeddedKeycloakApplication.class);
-
-    static KeycloakServerProperties keycloakServerProperties;
+    private static final Logger LOG   = LogManager.getLogger(EmbeddedKeycloakApplication.class);
 
     public EmbeddedKeycloakApplication(@Context ServletContext context, @Context Dispatcher dispatcher) {
-
         super(augmentToRedirectContextPath(context), dispatcher);
-
         tryCreateMasterRealmAdminUser();
     }
 
@@ -36,7 +33,7 @@ public class EmbeddedKeycloakApplication extends KeycloakApplication {
 
         ApplianceBootstrap applianceBootstrap = new ApplianceBootstrap(session);
 
-        AdminUser admin = keycloakServerProperties.getAdminUser();
+        AdminUser admin = EmbeddedKeycloakApp.getAdminUser();
 
         try {
             session.getTransactionManager().begin();
@@ -64,7 +61,7 @@ public class EmbeddedKeycloakApplication extends KeycloakApplication {
         InvocationHandler invocationHandler = (proxy, method, args) -> {
 
             if ("getContextPath".equals(method.getName())) {
-                return keycloakServerProperties.getContextPath();
+                return EmbeddedKeycloakApp.getContextPath();
             }
 
             if ("getInitParameter".equals(method.getName()) && args.length == 1 && "keycloak.embedded".equals(args[0])) {
@@ -72,10 +69,9 @@ public class EmbeddedKeycloakApplication extends KeycloakApplication {
             }
 
             LOG.info("{} {}", method.getName(), Arrays.toString(args));
-
             return method.invoke(servletContext, args);
         };
 
-        return ServletContext.class.cast(Proxy.newProxyInstance(classLoader, interfaces, invocationHandler));
+        return (ServletContext) Proxy.newProxyInstance(classLoader, interfaces, invocationHandler);
     }
 }
