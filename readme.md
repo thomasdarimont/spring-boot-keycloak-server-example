@@ -1,5 +1,8 @@
 Example for embedding Keycloak Server in a Spring-Boot App 
 ----------------------------------------------------------
+
+# Project Moved to [embedded-spring-boot-keycloak-server](https://github.com/thomasdarimont/embedded-spring-boot-keycloak-server)
+
 This is just a Proof of Concept and not recommended for production use,
 nevertheless it is a useful foundation to develop and test Keycloak extensions or 
 playing with Keycloak in general. 
