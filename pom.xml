@@ -23,7 +23,7 @@
         <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <keycloak.version>9.0.3</keycloak.version>
+        <keycloak.version>14.0.0</keycloak.version>
         <resteasy.version>3.11.2.Final</resteasy.version>
         <infinispan.version>9.4.19.Final</infinispan.version>
     </properties>
